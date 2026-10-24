@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learner Mode: practice navigation for new drivers</title>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;
+--bg:#e8ecee;--panel:#fff;--ink:#1b2328;--mute:#586670;--line:#d0d7dc;--map:#dbe3e7;--road:#fff;--rcase:#c2ccd2;--route:#1f7a4d;--trail:#f4c430;--acc:#1f7a4d;--aci:#fff;--red:#c93c3c;--blue:#1f78b4;--amb:#c77f10;--pur:#7a55c2;--gry:#5a6770}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12171b;--panel:#1a2126;--ink:#eaeef0;--mute:#98a5ae;--line:#2d373e;--map:#1f272d;--road:#34414b;--rcase:#10151a;--route:#f4c430;--trail:#fff;--acc:#f4c430;--aci:#1b1b1b}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#12171b;--panel:#1a2126;--ink:#eaeef0;--mute:#98a5ae;--line:#2d373e;--map:#1f272d;--road:#34414b;--rcase:#10151a;--route:#f4c430;--trail:#fff;--acc:#f4c430;--aci:#1b1b1b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 Overpass,system-ui,sans-serif}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 12px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button.pri{background:var(--acc);color:var(--aci);border-color:transparent;font-weight:800}
+.top{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.01em}
+.badge{font-size:13px;padding:3px 10px;border-radius:99px;background:var(--trail);color:#1b1b1b;font-weight:600}
+.sp{flex:1}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:none}
+.seg button[aria-pressed=true]{background:var(--acc);color:var(--aci);font-weight:800}
+.app{display:grid;grid-template-columns:290px minmax(0,1fr) 270px;gap:14px;padding:14px;max-width:1500px;margin:auto}
+@media (max-width:1000px){.app{grid-template-columns:minmax(0,1fr)}}
+.app:not([data-view="phone"]){grid-template-columns:minmax(0,1fr);max-width:1100px}
+.app:not([data-view="phone"]) .panel{display:none}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;align-self:start}
+h2{font-size:17px;margin:0 0 10px}
+.f{display:block;margin:12px 0 4px;font-weight:600}
+.f b{float:right;font-weight:800}
+input[type=range]{width:100%;accent-color:var(--acc)}
+select,input[type=password],input[type=text]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.opt{display:flex;gap:8px;align-items:flex-start;margin:7px 0}
+.opt input{margin-top:4px;accent-color:var(--acc)}
+.opt small{display:block;color:var(--mute)}
+.st{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0}
+.st:has(input:checked){border-color:var(--acc);box-shadow:inset 3px 0 0 var(--acc)}
+#gen{width:100%;margin-top:14px;padding:11px}
+#sum{color:var(--mute);margin:10px 0 0;font-size:14px}
+.frame{display:grid;gap:12px}
+.mapwrap{position:relative;background:var(--map);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#map{display:block;width:100%;height:auto}
+.legend{position:absolute;left:10px;top:8px;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--mute)}
+.bar{display:flex;gap:8px;align-items:center;padding:10px;border-top:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.meter{flex:1;min-width:120px;height:8px;border-radius:9px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--acc)}
+.coach{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.ico{width:64px;height:64px;border-radius:14px;display:grid;place-items:center;background:var(--k,var(--acc))}
+#cd{font-size:30px;font-weight:800;line-height:1}
+.ctitle{color:var(--mute);font-weight:600}
+.ctext{grid-column:1/-1;margin:4px 0;font-size:16px;max-width:64ch}
+.cact{grid-column:1/-1;display:flex;gap:10px;align-items:center}
+.vp{display:none;color:var(--acc);font-weight:800}
+.speaking .vp{display:inline}
+.mini{display:none;grid-column:1/-1;gap:16px;align-items:center;padding-top:6px;border-top:1px solid var(--line)}
+.mini .num{font-size:34px;font-weight:800}
+.dot{width:26px;height:26px;border-radius:50%;background:var(--line);display:inline-grid;place-items:center;font-size:12px;color:var(--mute)}
+.on.dot,.sbtn.on{background:#f4a300;color:#111}
+.on.dot{animation:blink .7s steps(1) infinite}
+@keyframes blink{50%{opacity:.35}}
+.app:not([data-view="phone"]) .frame{grid-template-columns:minmax(0,1.45fr) minmax(290px,1fr);background:#0b0d0f;padding:12px;border-radius:30px;border:8px solid #2a3036;--panel:#171b1f;--ink:#f1f4f5;--mute:#a1adb5;--line:#2c353c;--map:#1f272d;--road:#34414b;--rcase:#10151a;--route:#f4c430;--trail:#fff;--acc:#f4c430;--aci:#1b1b1b;color:var(--ink)}
+.app[data-view="auto"] .frame{border-radius:14px;--acc:#5aa9ff;--route:#5aa9ff;--trail:#f4c430}
+.app:not([data-view="phone"]) .coach{align-content:start;grid-template-columns:1fr}
+.app:not([data-view="phone"]) .ico{width:96px;height:96px}
+.app:not([data-view="phone"]) #cd{font-size:56px}
+.app:not([data-view="phone"]) .ctext{font-size:20px}
+.app:not([data-view="phone"]) .mini{display:flex}
+.app:not([data-view="phone"]) .cact button{padding:14px 18px;font-size:17px}
+@media (max-width:760px){.app:not([data-view="phone"]) .frame{grid-template-columns:minmax(0,1fr)}}
+.gauge{position:relative;width:170px;margin:0 auto}
+.gauge div{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-size:38px;font-weight:800;line-height:1}
+.gauge small{font-size:13px;color:var(--mute);font-weight:400}
+.sigs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.score{font-size:30px;font-weight:800}
+#log{list-style:none;margin:8px 0 0;padding:0;max-height:230px;overflow:auto;font-size:14px}
+#log li{padding:5px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+#log .p{color:var(--route);font-weight:800}#log .n{color:var(--red);font-weight:800}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);max-width:420px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.note{color:var(--mute);font-size:13px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+ <span class="brand">Learner Mode</span><span class="badge">Student prototype</span>
+ <span class="sp"></span>
+ <div class="seg" id="views" role="group" aria-label="Display mode">
+  <button data-v="phone" aria-pressed="true">Phone</button><button data-v="carplay" aria-pressed="false">CarPlay</button><button data-v="auto" aria-pressed="false">Android Auto</button>
+ </div>
+ <button id="theme">Dark / light</button><button id="vbtn">Voice settings</button>
+</header>
+
+<main class="app" data-view="phone" id="app">
+ <aside class="panel">
+  <h2>Plan a practice loop</h2>
+  <label class="f" for="dur">Drive length <b id="durv">15 min</b></label>
+  <input type="range" id="dur" min="5" max="60" step="5" value="15">
+  <span class="f">Skill stage</span>
+  <label class="st opt"><input type="radio" name="st" value="0" checked><span>Stage 1: quiet streets<small>Signals, smooth braking, stopping distance</small></span></label>
+  <label class="st opt"><input type="radio" name="st" value="1"><span>Stage 2: intersections<small>Roundabouts, mirror and blind-spot checks</small></span></label>
+  <label class="st opt"><input type="radio" name="st" value="2"><span>Restricted and advanced<small>Merging, lane position, busier roads</small></span></label>
+  <label class="f" for="turns">Number of turns</label>
+  <select id="turns"><option value="0">Low</option><option value="1" selected>Medium</option><option value="2">High</option></select>
+  <label class="f" for="traf">Traffic density</label>
+  <select id="traf"><option value="0">Low</option><option value="1">Medium</option><option value="2">High</option></select>
+  <label class="opt"><input type="checkbox" id="nomulti" checked><span>Avoid multi-lane roundabouts</span></label>
+  <label class="opt"><input type="checkbox" id="pri"><span>Roundabout priority<small>More roundabouts (Stage 2 and up)</small></span></label>
+  <label class="opt"><input type="checkbox" id="nohw" checked><span>Avoid highways and merges</span></label>
+  <label class="opt"><input type="checkbox" id="cap"><span>Cap the loop at 8 turns</span></label>
+  <button class="pri" id="gen">Generate practice loop</button>
+  <p id="sum"></p>
+ </aside>
+
+ <section>
+  <div class="frame" id="frame">
+   <div class="mapwrap">
+    <svg id="map" viewBox="0 0 900 540" role="img" aria-label="Practice loop map"></svg>
+    <div class="legend"><span>S Stop</span><span>Y Give way</span><span>R Roundabout</span><span>M Merge</span><span>L Lane check</span></div>
+    <div class="bar">
+     <button class="pri" id="play">Play</button><button id="spd">Speed ×1</button><button id="rst">Restart</button>
+     <div class="meter" aria-hidden="true"><i id="prog"></i></div><span id="clk" class="note"></span>
+    </div>
+   </div>
+   <div class="coach" id="coach">
+    <div class="ico" id="ico"><svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><g id="arr"><path d="M12 3l7 8h-5v10h-4V11H5z" fill="#fff"/></g></svg></div>
+    <div><div id="cd">0 m</div><div class="ctitle" id="ct">Ready</div></div>
+    <p class="ctext" id="cx" aria-live="polite"></p>
+    <div class="mini"><span class="num"><span class="js-sp">0</span><small class="note"> km/h</small></span><span class="dot sl" title="Left">L</span><span class="dot hz" title="Hazard">!</span><span class="dot sr" title="Right">R</span><span class="note">Score <b class="js-sc">0</b></span></div>
+    <div class="cact"><button id="spk">Speak prompt</button><span class="vp">Speaking…</span></div>
+   </div>
+  </div>
+ </section>
+
+ <aside class="panel">
+  <h2>Live telemetry</h2>
+  <div class="gauge">
+   <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--line)" stroke-width="10" stroke-linecap="round" stroke-dasharray="235.6 314.2" transform="rotate(135 60 60)"/><circle id="gv" cx="60" cy="60" r="50" fill="none" stroke="var(--acc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 314.2" transform="rotate(135 60 60)"/></svg>
+   <div><span class="js-sp">0</span><small>km/h</small></div>
+  </div>
+  <div class="sigs"><button class="sbtn sl" id="bL">◀ Left</button><button class="sbtn hz" id="bH">Hazard</button><button class="sbtn sr" id="bR">Right ▶</button></div>
+  <label class="opt"><input type="checkbox" id="demo" checked><span>Demo driver signals for me<small>Arrow keys also work</small></span></label>
+  <h2 style="margin-top:14px">Supervisor score</h2>
+  <div class="score js-sc">0</div>
+  <ul id="log"></ul>
+ </aside>
+</main>
+
+<dialog id="vd">
+ <h2>Voice settings</h2>
+ <label class="opt"><input type="checkbox" id="von" checked><span>Speak prompts aloud</span></label>
+ <label class="f" for="vs">Device voice</label><select id="vs"></select>
+ <label class="f" for="ek">ElevenLabs API key (optional)</label><input type="password" id="ek" autocomplete="off">
+ <label class="f" for="ei">ElevenLabs voice ID</label><input type="text" id="ei" value="21m00Tcm4TlvDq8ikWAM">
+ <p class="note">The key stays in this tab’s memory only. ElevenLabs requests work when you run the file from your own computer; a hosted page blocks outside requests, so it falls back to the device voice.</p>
+ <button id="vt">Test voice</button> <button class="pri" id="vc">Done</button>
+</dialog>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const CR=[8.3,11.1,16.7],TF=[1,.8,.6],G=90,P0=45;
+const K={stop:['S','var(--red)','Stop sign'],give:['Y','var(--amb)','Give way'],round:['R','var(--blue)','Roundabout'],merge:['M','var(--pur)','Merge'],lane:['L','var(--gry)','Lane check']};
+const V={on:true,key:'',id:'',voice:''};
+let S={ev:[],nodes:[],i:0,s:0,v:0,total:0,edgeM:1,play:false,mult:1,sig:null,haz:false,score:0,clock:0,hold:0,say:'',st:0,tr:0,dur:15},last=0,started=false,warned=false;
+const fmt=m=>m>=1000?(m/1000).toFixed(1)+' km':Math.max(0,Math.round(m/10)*10)+' m';
+const spoken=m=>m>=1000?(m/1000).toFixed(1)+' kilometres':Math.round(m/10)*10+' metres';
+const lab=e=>K[e.kind]?K[e.kind][2].toLowerCase():'the turn';
+
+function words(e,near){
+ const d=spoken(e.pm),t=e.turn,r=e.kind;
+ if(near)return({stop:'Stop line ahead. Brake gently.',give:'Look right. Be ready to stop.',round:'Slow down and look right.',merge:'Check your blind spot.',lane:'Check your mirror.'})[r]||`Indicate ${t} now.`;
+ if(r=='stop')return`Stop sign ahead in ${d}. Ease off the accelerator and come to a full stop for three seconds, then check both ways.`;
+ if(r=='give')return`Give way ahead in ${d}. Slow down, look right, and go only when the gap is safe.`;
+ if(r=='round'){const n=e.lanes==2?'Two-lane roundabout':'Roundabout',l=e.lanes==2?(t=='left'?', stay in the left lane':', move to the right lane'):'';
+  return t=='left'?`${n} in ${d}. Taking the first exit: indicate left now${l}, and give way to traffic from the right.`:`${n} in ${d}. Going past halfway: indicate right now${l}, then indicate left after the exit before yours.`}
+ if(r=='merge')return`Merge ahead in ${d}. Check your mirror, indicate, check your blind spot, then match the speed of traffic.`;
+ if(r=='lane')return`Lane check in ${d}. Stay centred in your lane and keep a three-second gap.`;
+ return`Turn ${t} in ${d}. Check your mirror, indicate ${t}, and slow smoothly.${S.st?' Check your blind spot before you move.':''}`;
+}
+
+function gen(){
+ pause();started=false;
+ const dur=+$('#dur').value,st=+$('[name=st]:checked').value,tl=+$('#turns').value,tr=+$('#traf').value;
+ const multi=!$('#nomulti').checked,pri=$('#pri').checked,nohw=$('#nohw').checked,cap=$('#cap').checked;
+ const sum=Math.round(2+(dur-5)/55*12),h=Math.min(5,Math.max(1,Math.floor(sum/2.4))),w=Math.min(9,sum-h);
+ const C=[[0,0],[w,0],[w,h],[0,h]],L=[w,h,w,h],sh=[0,0,0,0],cut=[];
+ let cuts=[0,1,3][tl];if(cap)cuts=Math.min(cuts,2);
+ for(const i of[2,1,3]){if(cut.length>=cuts)break;const a=(i+3)%4;if(L[a]-sh[a]-1>=1&&L[i]-sh[i]-1>=1){sh[a]++;sh[i]++;cut.push(i)}}
+ const u=(a,b)=>[Math.sign(b[0]-a[0]),Math.sign(b[1]-a[1])],P=[];
+ for(let i=0;i<4;i++){const c=C[i],I=u(C[(i+3)%4],c),O=u(c,C[(i+1)%4]);
+  if(cut.includes(i)){const a=[c[0]-I[0],c[1]-I[1]];P.push(a,[a[0]+O[0],a[1]+O[1]],[c[0]+O[0],c[1]+O[1]])}else P.push(c)}
+ P.push(P[0]);
+ const N=[P[0]];
+ for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i],dx=Math.sign(b[0]-a[0]),dy=Math.sign(b[1]-a[1]);let x=a[0],y=a[1];while(x!=b[0]||y!=b[1]){x+=dx;y+=dy;N.push([x,y])}}
+ const ox=Math.floor((9-w)/2),oy=Math.floor((5-h)/2),NE=N.length-1;
+ const nd=N.map(([x,y],k)=>({x:(ox+x)*G+P0,y:(oy+y)*G+P0,k}));
+ const edgeM=CR[st]*TF[tr]*60*dur/NE;
+ nd.forEach(n=>n.s=n.k*edgeM);
+ for(let k=1;k<NE;k++){const a=nd[k-1],b=nd[k],c=nd[k+1],cr=(b.x-a.x)*(c.y-b.y)-(b.y-a.y)*(c.x-b.x);if(cr)b.turn=cr>0?'right':'left'}
+ const pr=Math.random;
+ for(let k=1;k<NE;k++){const n=nd[k],r=pr();
+  if(n.turn){
+   if(st==0)n.kind=r<.45?'stop':r<.65?'give':null;
+   else if(st==1){const q=pri?.55:.3;n.kind=r<q?'round':r<q+.25?'stop':r<q+.4?'give':null}
+   else n.kind=r<(pri?.4:.15)?'round':r<.45?'give':null;
+  }else if(st==2&&nd[k-1].turn&&r<.8)n.kind=nohw?'lane':'merge';
+  if(n.kind=='round')n.lanes=multi?2:1;
+ }
+ const turns=nd.filter(n=>n.turn);
+ if(st>0&&turns.length&&!nd.some(n=>n.kind=='round')){const n=turns[Math.floor(pr()*turns.length)];n.kind='round';n.lanes=multi?2:1}
+ const pm=Math.min([150,180,260][st],edgeM*.7);
+ Object.assign(S,{nodes:nd,ev:nd.filter(n=>n.turn||n.kind).map(n=>({...n,pm})),edgeM,total:NE*edgeM,st,tr,dur,turnCount:turns.length});
+ const cps=S.ev.filter(e=>e.kind).length;
+ $('#sum').textContent=`${turns.length} turns, ${cps} checkpoints, ${(S.total/1000).toFixed(1)} km, about ${dur} min.`;
+ resetRun();drawMap();draw();
+}
+
+function resetRun(){
+ Object.assign(S,{i:0,s:0,v:0,sig:null,haz:false,score:0,clock:0,hold:0,say:'',done:false});
+ S.ev.forEach(e=>{e.p1=e.p2=e.sc=e.au=0});started=false;
+ $('#log').innerHTML='';$('#play').textContent='Play';
+}
+
+function drawMap(){
+ let d='';for(let r=0;r<6;r++)d+=`M0 ${r*G+P0}H900`;for(let c=0;c<10;c++)d+=`M${c*G+P0} 0V540`;
+ const pts=S.nodes.map(n=>n.x+','+n.y).join(' ');
+ let m=S.ev.filter(e=>e.kind).map(e=>{const k=K[e.kind];return`<g transform="translate(${e.x} ${e.y})"><circle r="15" fill="${k[1]}" stroke="var(--panel)" stroke-width="3"/><text text-anchor="middle" dy=".35em" fill="#fff" font-weight="800" font-size="14">${k[0]}</text></g>`}).join('');
+ const h=S.nodes[0];
+ $('#map').innerHTML=`<path d="${d}" stroke="var(--rcase)" stroke-width="20" fill="none"/><path d="${d}" stroke="var(--road)" stroke-width="15" fill="none"/>
+ <polyline points="${pts}" fill="none" stroke="var(--route)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>
+ <polyline id="trail" points="${pts}" fill="none" stroke="var(--trail)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="0 99999"/>
+ ${m}<g transform="translate(${h.x} ${h.y})"><rect x="-17" y="-17" width="34" height="34" rx="9" fill="var(--ink)" stroke="var(--panel)" stroke-width="3"/><text text-anchor="middle" dy=".35em" fill="var(--panel)" font-weight="800" font-size="13">Home</text></g>
+ <g id="car"><circle r="12" fill="var(--trail)" stroke="#111" stroke-width="3"/><path d="M0-7L6 6 0 3-6 6Z" fill="#111"/></g>`;
+}
+
+function pos(){
+ const k=Math.min(S.nodes.length-2,Math.floor(S.s/S.edgeM)),f=(S.s-k*S.edgeM)/S.edgeM,a=S.nodes[k],b=S.nodes[k+1];
+ return{x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,r:Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI+90};
+}
+
+function draw(){
+ const p=pos();$('#car').setAttribute('transform',`translate(${p.x} ${p.y}) rotate(${p.r})`);
+ $('#trail').setAttribute('stroke-dasharray',`${S.s/S.edgeM*G} 99999`);
+ const e=S.ev[S.i],k=e&&K[e.kind];
+ $('#cd').textContent=fmt((e?e.s:S.total)-S.s);
+ $('#ct').textContent=e?(k?k[2]+(e.turn?', turning '+e.turn:''):'Turn '+e.turn):(S.done?'Drive complete':'Back home');
+ $('#ico').style.setProperty('--k',k?k[1]:'var(--acc)');
+ $('#arr').setAttribute('transform',`rotate(${e&&e.turn=='left'?-90:e&&e.turn=='right'?90:0} 12 12)`);
+ $('#cx').textContent=S.say||'Press Play and I’ll talk you through every maneuver.';
+ const kmh=Math.round(S.v*3.6);
+ $$('.js-sp').forEach(n=>n.textContent=kmh);$$('.js-sc').forEach(n=>n.textContent=S.score);
+ $('#gv').setAttribute('stroke-dasharray',`${Math.min(1,kmh/80)*235.6} 314.2`);
+ $$('.sl').forEach(x=>x.classList.toggle('on',S.sig=='left'||S.haz));
+ $$('.sr').forEach(x=>x.classList.toggle('on',S.sig=='right'||S.haz));
+ $$('.hz').forEach(x=>x.classList.toggle('on',S.haz));
+ $('#prog').style.width=S.s/S.total*100+'%';
+ const t=Math.floor(S.clock);$('#clk').textContent=`${Math.floor(t/60)}:${String(t%60).padStart(2,'0')} of about ${S.dur} min`;
+}
+
+function log(t,pts){
+ S.score+=pts||0;
+ const li=document.createElement('li');li.innerHTML=`<span></span><span class="${pts>0?'p':'n'}">${pts?(pts>0?'+':'')+pts:''}</span>`;
+ li.firstChild.textContent=t;$('#log').prepend(li);
+}
+function say(t){S.say=t;speak(t)}
+
+function step(dt){
+ S.clock+=dt;
+ const cr=CR[S.st]*TF[S.tr];
+ if(S.hold>0){S.hold-=dt;S.v=0;if(S.hold<=0){S.hold=0;log('Held the stop for three seconds',10);S.i++;S.sig=null}return}
+ let al=Math.min(cr,Math.sqrt(4*Math.max(S.total-S.s,0)));
+ for(let j=S.i;j<Math.min(S.ev.length,S.i+2);j++){const e=S.ev[j],d=Math.max(e.s-S.s,0),vn=e.kind=='stop'?0:e.kind=='merge'||e.kind=='lane'?cr*.8:e.kind=='round'?4.5:e.kind=='give'?4:5.5;al=Math.min(al,vn+Math.sqrt(4*d))}
+ S.v=S.v<al?Math.min(al,S.v+1.8*dt):Math.max(al,S.v-3.5*dt);
+ S.s=Math.min(S.total,S.s+S.v*dt);
+ const c=S.ev[S.i];
+ if(c&&c.kind=='stop'&&S.s>=c.s-.5){S.s=c.s;S.v=0;S.hold=3}
+ for(let j=S.i;j<Math.min(S.ev.length,S.i+2);j++){const e=S.ev[j],d=e.s-S.s;
+  if(!e.p1&&d<=e.pm){e.p1=1;say(words(e))}else if(!e.p2&&d<=45){e.p2=1;say(words(e,1))}
+  if(e.turn&&!e.au&&d<=70){e.au=1;if($('#demo').checked&&Math.random()>.15)S.sig=e.turn}
+  if(e.turn&&!e.sc&&d<=12){e.sc=1;const ok=S.sig===e.turn;log(ok?`Signalled ${e.turn} before ${lab(e)}`:`Missed ${e.turn} signal at ${lab(e)}`,ok?10:-5)}
+ }
+ while(S.i<S.ev.length&&S.ev[S.i].kind!='stop'&&S.s>=S.ev[S.i].s){S.sig=null;S.i++}
+ if(S.s>=S.total-.5)finish();
+}
+
+function finish(){
+ S.done=true;pause();S.s=S.total;S.v=0;
+ const m=`You’re back home. Practice drive complete, with a score of ${S.score}.`;
+ log('Drive complete',0);say(m);$('#play').textContent='Replay';
+}
+
+function tick(t){
+ if(!S.play)return;
+ const dt=Math.min(.05,(t-last)/1000);last=t;
+ step(dt*S.mult*4);draw();requestAnimationFrame(tick);
+}
+function playSim(){
+ if(S.done)resetRun();
+ if(!started){started=true;say('Starting your practice drive. Check your mirrors, buckle up, and pull away smoothly.')}
+ S.play=true;last=performance.now();$('#play').textContent='Pause';requestAnimationFrame(tick);
+}
+function pause(){S.play=false;$('#play').textContent=S.done?'Replay':(S.s>0?'Resume':'Play');if(window.speechSynthesis)speechSynthesis.cancel();setSpeaking(false)}
+
+function setSpeaking(b){$('#app').classList.toggle('speaking',b)}
+async function speak(text){
+ if(!V.on)return;
+ if(V.key){
+  try{
+   const r=await fetch('https://api.elevenlabs.io/v1/text-to-speech/'+(V.id||'21m00Tcm4TlvDq8ikWAM'),{method:'POST',headers:{'xi-api-key':V.key,'Content-Type':'application/json'},body:JSON.stringify({text,model_id:'eleven_turbo_v2_5'})});
+   if(!r.ok)throw 0;
+   const a=new Audio(URL.createObjectURL(await r.blob()));a.onplay=()=>setSpeaking(true);a.onended=()=>setSpeaking(false);await a.play();return;
+  }catch(x){if(!warned){warned=true;log('ElevenLabs unavailable, using the device voice',0)}}
+ }
+ if(!window.speechSynthesis)return;
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(text);u.rate=.95;
+ const v=speechSynthesis.getVoices().find(x=>x.name===V.voice);if(v)u.voice=v;
+ u.onstart=()=>setSpeaking(true);u.onend=u.onerror=()=>setSpeaking(false);
+ speechSynthesis.speak(u);
+}
+
+$('#dur').oninput=e=>$('#durv').textContent=e.target.value+' min';
+$('#gen').onclick=gen;
+$('#play').onclick=()=>S.play?pause():playSim();
+$('#rst').onclick=()=>{pause();resetRun();draw()};
+$('#spd').onclick=()=>{S.mult=S.mult==1?2:S.mult==2?4:1;$('#spd').textContent='Speed ×'+S.mult};
+$('#spk').onclick=()=>{const e=S.ev[S.i];speak(S.say||(e?words(e):'Press Play to start.'))};
+const sig=d=>{S.sig=S.sig===d?null:d;draw()};
+$('#bL').onclick=()=>sig('left');$('#bR').onclick=()=>sig('right');$('#bH').onclick=()=>{S.haz=!S.haz;draw()};
+document.addEventListener('keydown',e=>{
+ if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+ if(e.key=='ArrowLeft')sig('left');else if(e.key=='ArrowRight')sig('right');
+});
+$('#views').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+ $('#app').dataset.view=b.dataset.v;$$('#views button').forEach(x=>x.setAttribute('aria-pressed',x==b))};
+$('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dark?'light':'dark'};
+$('#vbtn').onclick=()=>$('#vd').showModal();
+$('#vc').onclick=()=>{V.on=$('#von').checked;V.key=$('#ek').value.trim();V.id=$('#ei').value.trim();V.voice=$('#vs').value;$('#vd').close()};
+$('#vt').onclick=()=>{V.on=true;V.key=$('#ek').value.trim();V.id=$('#ei').value.trim();V.voice=$('#vs').value;speak('Roundabout in 100 metres. Indicate left now and give way to traffic from the right.')};
+function voices(){if(!window.speechSynthesis)return;const l=speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang));$('#vs').innerHTML=l.map(x=>`<option>${x.name}</option>`).join('');if(V.voice)$('#vs').value=V.voice}
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged=voices;voices()}
+gen();
+</script>
+</body>
+</html>
